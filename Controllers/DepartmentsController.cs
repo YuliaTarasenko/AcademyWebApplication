@@ -32,9 +32,9 @@ namespace AcademyWebApplication.Controllers
         }
 
         // GET: Departments/ShowSearchForm
-        public string ShowSearchForm(string Search)
+        public async Task<IActionResult> ShowSearchForm(string Search)
         {
-            return "You entered" + Search;
+            return View("Index", await _context.Department.Where(d => d.Name.Contains(Search) || d.Financing == Convert.ToDecimal(Search) || d.ID.ToString() == Search).ToListAsync());
         }
 
         // GET: Departments/Details/5
