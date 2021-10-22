@@ -34,7 +34,7 @@ namespace AcademyWebApplication.Controllers
             }
 
             var @group = await _context.Group
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (@group == null)
             {
                 return NotFound();
@@ -54,7 +54,7 @@ namespace AcademyWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Rating,Year")] Group @group)
+        public async Task<IActionResult> Create([Bind("Id,Name,Rating,Year")] Group @group)
         {
             if (ModelState.IsValid)
             {
@@ -86,9 +86,9 @@ namespace AcademyWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Rating,Year")] Group @group)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Rating,Year")] Group @group)
         {
-            if (id != @group.ID)
+            if (id != @group.Id)
             {
                 return NotFound();
             }
@@ -102,7 +102,7 @@ namespace AcademyWebApplication.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GroupExists(@group.ID))
+                    if (!GroupExists(@group.Id))
                     {
                         return NotFound();
                     }
@@ -125,7 +125,7 @@ namespace AcademyWebApplication.Controllers
             }
 
             var @group = await _context.Group
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (@group == null)
             {
                 return NotFound();
@@ -147,7 +147,7 @@ namespace AcademyWebApplication.Controllers
 
         private bool GroupExists(int id)
         {
-            return _context.Group.Any(e => e.ID == id);
+            return _context.Group.Any(e => e.Id == id);
         }
     }
 }

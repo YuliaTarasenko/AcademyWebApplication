@@ -19,25 +19,25 @@ namespace AcademyWebApplication.Controllers
             _context = context;
         }
 
-        // GET: Departments
+        // GET: Department
         public async Task<IActionResult> Index()
         {
             return View(await _context.Department.ToListAsync());
         }
 
-        // GET: Departments/Search
+        // GET: Department/Search
         public async Task<IActionResult> DepartmentsSearch()
         {
             return View();
         }
 
-        // GET: Departments/ShowSearchForm
+        // GET: Department/ShowSearchForm
         public async Task<IActionResult> ShowSearchForm(string Search)
         {
-            return View("Index", await _context.Department.Where(d => d.Name.Contains(Search) || d.Financing == Convert.ToDecimal(Search) || d.ID.ToString() == Search).ToListAsync());
+            return View("Index", await _context.Department.Where(d => d.Name.Contains(Search) || d.Financing == Convert.ToDecimal(Search) || d.Id.ToString() == Search).ToListAsync());
         }
 
-        // GET: Departments/Details/5
+        // GET: Department/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -46,7 +46,7 @@ namespace AcademyWebApplication.Controllers
             }
 
             var department = await _context.Department
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (department == null)
             {
                 return NotFound();
@@ -55,18 +55,18 @@ namespace AcademyWebApplication.Controllers
             return View(department);
         }
 
-        // GET: Departments/Create
+        // GET: Department/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Departments/Create
+        // POST: Department/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Financing,Name")] Department department)
+        public async Task<IActionResult> Create([Bind("Id,Financing,Name")] Department department)
         {
             if (ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace AcademyWebApplication.Controllers
             return View(department);
         }
 
-        // GET: Departments/Edit/5
+        // GET: Department/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -93,14 +93,14 @@ namespace AcademyWebApplication.Controllers
             return View(department);
         }
 
-        // POST: Departments/Edit/5
+        // POST: Department/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Financing,Name")] Department department)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Financing,Name")] Department department)
         {
-            if (id != department.ID)
+            if (id != department.Id)
             {
                 return NotFound();
             }
@@ -114,7 +114,7 @@ namespace AcademyWebApplication.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DepartmentExists(department.ID))
+                    if (!DepartmentExists(department.Id))
                     {
                         return NotFound();
                     }
@@ -128,7 +128,7 @@ namespace AcademyWebApplication.Controllers
             return View(department);
         }
 
-        // GET: Departments/Delete/5
+        // GET: Department/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -137,7 +137,7 @@ namespace AcademyWebApplication.Controllers
             }
 
             var department = await _context.Department
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (department == null)
             {
                 return NotFound();
@@ -146,7 +146,7 @@ namespace AcademyWebApplication.Controllers
             return View(department);
         }
 
-        // POST: Departments/Delete/5
+        // POST: Department/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -159,7 +159,7 @@ namespace AcademyWebApplication.Controllers
 
         private bool DepartmentExists(int id)
         {
-            return _context.Department.Any(e => e.ID == id);
+            return _context.Department.Any(e => e.Id == id);
         }
     }
 }

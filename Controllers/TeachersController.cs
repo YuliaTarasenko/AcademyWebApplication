@@ -34,7 +34,7 @@ namespace AcademyWebApplication.Controllers
             }
 
             var teacher = await _context.Teacher
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (teacher == null)
             {
                 return NotFound();
@@ -54,7 +54,7 @@ namespace AcademyWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Surname,EmploymentDate,Premium,Salary")] Teacher teacher)
+        public async Task<IActionResult> Create([Bind("Id,Name,Surname,EmploymentDate,Premium,Salary")] Teacher teacher)
         {
             if (ModelState.IsValid)
             {
@@ -86,9 +86,9 @@ namespace AcademyWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Surname,EmploymentDate,Premium,Salary")] Teacher teacher)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Surname,EmploymentDate,Premium,Salary")] Teacher teacher)
         {
-            if (id != teacher.ID)
+            if (id != teacher.Id)
             {
                 return NotFound();
             }
@@ -102,7 +102,7 @@ namespace AcademyWebApplication.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TeacherExists(teacher.ID))
+                    if (!TeacherExists(teacher.Id))
                     {
                         return NotFound();
                     }
@@ -125,7 +125,7 @@ namespace AcademyWebApplication.Controllers
             }
 
             var teacher = await _context.Teacher
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (teacher == null)
             {
                 return NotFound();
@@ -147,7 +147,7 @@ namespace AcademyWebApplication.Controllers
 
         private bool TeacherExists(int id)
         {
-            return _context.Teacher.Any(e => e.ID == id);
+            return _context.Teacher.Any(e => e.Id == id);
         }
     }
 }

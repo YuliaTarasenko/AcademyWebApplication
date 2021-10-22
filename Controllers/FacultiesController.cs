@@ -34,7 +34,7 @@ namespace AcademyWebApplication.Controllers
             }
 
             var faculty = await _context.Faculty
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (faculty == null)
             {
                 return NotFound();
@@ -54,7 +54,7 @@ namespace AcademyWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name")] Faculty faculty)
+        public async Task<IActionResult> Create([Bind("Id,Name")] Faculty faculty)
         {
             if (ModelState.IsValid)
             {
@@ -86,9 +86,9 @@ namespace AcademyWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name")] Faculty faculty)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Faculty faculty)
         {
-            if (id != faculty.ID)
+            if (id != faculty.Id)
             {
                 return NotFound();
             }
@@ -102,7 +102,7 @@ namespace AcademyWebApplication.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!FacultyExists(faculty.ID))
+                    if (!FacultyExists(faculty.Id))
                     {
                         return NotFound();
                     }
@@ -125,7 +125,7 @@ namespace AcademyWebApplication.Controllers
             }
 
             var faculty = await _context.Faculty
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (faculty == null)
             {
                 return NotFound();
@@ -147,7 +147,7 @@ namespace AcademyWebApplication.Controllers
 
         private bool FacultyExists(int id)
         {
-            return _context.Faculty.Any(e => e.ID == id);
+            return _context.Faculty.Any(e => e.Id == id);
         }
     }
 }
