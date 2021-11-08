@@ -22,7 +22,7 @@ namespace AcademyWebApplication.Controllers
         // GET: Department
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Department.ToListAsync());
+            return View(await _context.Departments.ToListAsync());
         }
 
         // GET: Department/Search
@@ -34,7 +34,7 @@ namespace AcademyWebApplication.Controllers
         // GET: Department/ShowSearchForm
         public async Task<IActionResult> ShowSearchForm(string Search)
         {
-            return View("Index", await _context.Department.Where(d => d.Name.Contains(Search) || d.Financing == Convert.ToDecimal(Search) || d.Id.ToString() == Search).ToListAsync());
+            return View("Index", await _context.Departments.Where(d => d.Name.Contains(Search) || d.Financing == Convert.ToDecimal(Search) || d.Id.ToString() == Search).ToListAsync());
         }
 
         // GET: Department/Details/5
@@ -45,7 +45,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Department
+            var department = await _context.Departments
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (department == null)
             {
@@ -66,7 +66,7 @@ namespace AcademyWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Financing,Name")] Department department)
+        public async Task<IActionResult> Create([Bind("Id,Financing,Name,FacultyId")] Department department)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Department.FindAsync(id);
+            var department = await _context.Departments.FindAsync(id);
             if (department == null)
             {
                 return NotFound();
@@ -136,7 +136,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Department
+            var department = await _context.Departments
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (department == null)
             {
@@ -151,15 +151,15 @@ namespace AcademyWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var department = await _context.Department.FindAsync(id);
-            _context.Department.Remove(department);
+            var department = await _context.Departments.FindAsync(id);
+            _context.Departments.Remove(department);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool DepartmentExists(int id)
         {
-            return _context.Department.Any(e => e.Id == id);
+            return _context.Departments.Any(e => e.Id == id);
         }
     }
 }

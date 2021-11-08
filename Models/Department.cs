@@ -16,8 +16,7 @@ namespace AcademyWebApplication.Models
         public decimal Financing { get; set; }
         public string Name { get; set; }
         public int FacultyId { get; set; }
-
         [ForeignKey("FacultyId")]
-        public virtual Faculty Faculty { get; set; }
+        public virtual Faculty Faculty{ get; set; }
     }
 }

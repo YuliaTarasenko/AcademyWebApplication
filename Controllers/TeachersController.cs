@@ -22,7 +22,7 @@ namespace AcademyWebApplication.Controllers
         // GET: Teachers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Teacher.ToListAsync());
+            return View(await _context.Teachers.ToListAsync());
         }
 
         // GET: Teachers/Details/5
@@ -33,7 +33,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var teacher = await _context.Teacher
+            var teacher = await _context.Teachers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (teacher == null)
             {
@@ -73,7 +73,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var teacher = await _context.Teacher.FindAsync(id);
+            var teacher = await _context.Teachers.FindAsync(id);
             if (teacher == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var teacher = await _context.Teacher
+            var teacher = await _context.Teachers
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (teacher == null)
             {
@@ -139,15 +139,15 @@ namespace AcademyWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var teacher = await _context.Teacher.FindAsync(id);
-            _context.Teacher.Remove(teacher);
+            var teacher = await _context.Teachers.FindAsync(id);
+            _context.Teachers.Remove(teacher);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TeacherExists(int id)
         {
-            return _context.Teacher.Any(e => e.Id == id);
+            return _context.Teachers.Any(e => e.Id == id);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace AcademyWebApplication.Controllers
         // GET: Groups
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Group.ToListAsync());
+            return View(await _context.Groups.ToListAsync());
         }
 
         // GET: Groups/Details/5
@@ -33,7 +33,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var @group = await _context.Group
+            var @group = await _context.Groups
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@group == null)
             {
@@ -73,7 +73,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var @group = await _context.Group.FindAsync(id);
+            var @group = await _context.Groups.FindAsync(id);
             if (@group == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var @group = await _context.Group
+            var @group = await _context.Groups
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@group == null)
             {
@@ -139,15 +139,15 @@ namespace AcademyWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @group = await _context.Group.FindAsync(id);
-            _context.Group.Remove(@group);
+            var @group = await _context.Groups.FindAsync(id);
+            _context.Groups.Remove(@group);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool GroupExists(int id)
         {
-            return _context.Group.Any(e => e.Id == id);
+            return _context.Groups.Any(e => e.Id == id);
         }
     }
 }

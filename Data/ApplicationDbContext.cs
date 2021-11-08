@@ -68,11 +68,12 @@ namespace AcademyWebApplication.Data
             base.OnModelCreating(builder);
         }
 
-        public DbSet<AcademyWebApplication.Models.Department> Department { get; set; }
-        public DbSet<AcademyWebApplication.Models.Faculty> Faculty { get; set; }
-        public DbSet<AcademyWebApplication.Models.Group> Group { get; set; }
-        public DbSet<AcademyWebApplication.Models.Teacher> Teacher { get; set; }
-        public DbSet<AcademyWebApplication.Models.Lecture> Lecture { get; set; }
-        public DbSet<AcademyWebApplication.Models.Subject> Subject { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Faculty> Faculties { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<Teacher> Teachers { get; set; }
+        public DbSet<Lecture> Lectures { get; set; }
+        public DbSet<Subject> Subjects { get; set; }
+        public DbSet<GroupLecture> GroupsLectures { get; set; }
     }
 }

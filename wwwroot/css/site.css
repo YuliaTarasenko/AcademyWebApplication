@@ -5,11 +5,16 @@ a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
+  color: forestgreen;
+}
+
+.table {
+    font-size: medium;
 }
 
 /* Provide sufficient contrast against white background */
 a {
-  color: #0366d6;
+  color: gray;
 }
 
 .btn-primary {

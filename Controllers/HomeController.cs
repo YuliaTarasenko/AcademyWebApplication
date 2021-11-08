@@ -1,4 +1,5 @@
-﻿using AcademyWebApplication.Models;
+﻿using AcademyWebApplication.Data.Repositories;
+using AcademyWebApplication.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,10 +13,12 @@ namespace AcademyWebApplication.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IFacultiesRepository _facultiesRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IFacultiesRepository facultiesRepository)
         {
             _logger = logger;
+            _facultiesRepository = facultiesRepository;
         }
 
         public IActionResult Index()
@@ -23,9 +26,9 @@ namespace AcademyWebApplication.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Overview()
         {
-            return View();
+            return View(_facultiesRepository.GetOverview());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
