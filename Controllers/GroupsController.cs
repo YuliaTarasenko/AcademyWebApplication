@@ -7,22 +7,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AcademyWebApplication.Data;
 using AcademyWebApplication.Models;
+using AcademyWebApplication.Data.Repositories;
 
 namespace AcademyWebApplication.Controllers
 {
     public class GroupsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IGroupsRepository _repo;
 
-        public GroupsController(ApplicationDbContext context)
+        public GroupsController(IGroupsRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: Groups
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Groups.ToListAsync());
+            return View(await _repo.GetMany().ToListAsync());
         }
 
         // GET: Groups/Details/5
@@ -33,14 +34,13 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var @group = await _context.Groups
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
+            var group = await _repo.GetAsync(m => m.Id == id);
+            if (group == null)
             {
                 return NotFound();
             }
 
-            return View(@group);
+            return View(group);
         }
 
         // GET: Groups/Create
@@ -54,15 +54,14 @@ namespace AcademyWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Rating,Year")] Group @group)
+        public async Task<IActionResult> Create([Bind("Id,Name,Rating,Year")] Group group)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(@group);
-                await _context.SaveChangesAsync();
+                await _repo.AddAsync(group);
                 return RedirectToAction(nameof(Index));
             }
-            return View(@group);
+            return View(group);
         }
 
         // GET: Groups/Edit/5
@@ -73,12 +72,13 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var @group = await _context.Groups.FindAsync(id);
-            if (@group == null)
+            var entity = await _repo.GetAsync(g=>g.Id == id);
+            await _repo.UpdateAsync(entity);
+            if (entity == null)
             {
                 return NotFound();
             }
-            return View(@group);
+            return View(entity);
         }
 
         // POST: Groups/Edit/5
@@ -86,23 +86,22 @@ namespace AcademyWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Rating,Year")] Group @group)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Rating,Year")] Group group)
         {
-            if (id != @group.Id)
+            if (id != group.Id)
             {
-                return NotFound();
+                return NotFound($"Id is not equal with {nameof(Group)}.Id");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(@group);
-                    await _context.SaveChangesAsync();
+                    await _repo.UpdateAsync(group);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GroupExists(@group.Id))
+                    if (!await GroupExistsAsync(group.Id))
                     {
                         return NotFound();
                     }
@@ -113,7 +112,7 @@ namespace AcademyWebApplication.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(@group);
+            return View(group);
         }
 
         // GET: Groups/Delete/5
@@ -124,14 +123,13 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var @group = await _context.Groups
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (@group == null)
+            var group = await _repo.GetAsync(m => m.Id == id);
+            if (group == null)
             {
                 return NotFound();
             }
 
-            return View(@group);
+            return View(group);
         }
 
         // POST: Groups/Delete/5
@@ -139,15 +137,15 @@ namespace AcademyWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var @group = await _context.Groups.FindAsync(id);
-            _context.Groups.Remove(@group);
-            await _context.SaveChangesAsync();
+            var group = await _repo.GetAsync(g=>g.Id == id);
+            if (group == null) return NotFound($"Record with id: {id} is not found");
+            await _repo.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GroupExists(int id)
+        private Task<bool> GroupExistsAsync(int id)
         {
-            return _context.Groups.Any(e => e.Id == id);
+            return _repo.AnyAsync(e => e.Id == id);
         }
     }
 }

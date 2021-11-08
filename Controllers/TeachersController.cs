@@ -7,22 +7,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AcademyWebApplication.Data;
 using AcademyWebApplication.Models;
+using AcademyWebApplication.Data.Repositories;
 
 namespace AcademyWebApplication.Controllers
 {
     public class TeachersController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITeachersRepository _repo;
 
-        public TeachersController(ApplicationDbContext context)
+        public TeachersController(ITeachersRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: Teachers
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Teachers.ToListAsync());
+            return View(await _repo.GetMany().ToListAsync());
         }
 
         // GET: Teachers/Details/5
@@ -33,8 +34,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var teacher = await _context.Teachers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var teacher = await _repo.GetAsync(m => m.Id == id);
             if (teacher == null)
             {
                 return NotFound();
@@ -58,8 +58,7 @@ namespace AcademyWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(teacher);
-                await _context.SaveChangesAsync();
+                await _repo.AddAsync(teacher);
                 return RedirectToAction(nameof(Index));
             }
             return View(teacher);
@@ -73,12 +72,13 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var teacher = await _context.Teachers.FindAsync(id);
-            if (teacher == null)
+            var entity = await _repo.GetAsync(t=>t.Id==id);
+            await _repo.UpdateAsync(entity);
+            if (entity == null)
             {
                 return NotFound();
             }
-            return View(teacher);
+            return View(entity);
         }
 
         // POST: Teachers/Edit/5
@@ -90,19 +90,18 @@ namespace AcademyWebApplication.Controllers
         {
             if (id != teacher.Id)
             {
-                return NotFound();
+                return NotFound($"Id is not equal with {nameof(Teacher)}.Id");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(teacher);
-                    await _context.SaveChangesAsync();
+                    await _repo.UpdateAsync(teacher);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TeacherExists(teacher.Id))
+                    if (!await TeacherExistsAsync(teacher.Id))
                     {
                         return NotFound();
                     }
@@ -124,8 +123,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var teacher = await _context.Teachers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var teacher = await _repo.GetAsync(m => m.Id == id);
             if (teacher == null)
             {
                 return NotFound();
@@ -139,15 +137,15 @@ namespace AcademyWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var teacher = await _context.Teachers.FindAsync(id);
-            _context.Teachers.Remove(teacher);
-            await _context.SaveChangesAsync();
+            var teacher = await _repo.GetAsync(t=>t.Id==id);
+            if (teacher == null) return NotFound($"Record with id: {id} is not found");
+            await _repo.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TeacherExists(int id)
+        private Task<bool> TeacherExistsAsync(int id)
         {
-            return _context.Teachers.Any(e => e.Id == id);
+            return _repo.AnyAsync(e => e.Id == id);
         }
     }
 }

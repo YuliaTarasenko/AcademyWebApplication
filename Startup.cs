@@ -28,6 +28,9 @@ namespace AcademyWebApplication
 
             //Dependency Injections
             services.AddScoped<IFacultiesRepository, FacultiesRepository>();
+            services.AddScoped<IDepartmentsRepository, DepartmentsRepository>();
+            services.AddScoped<IGroupsRepository, GroupsRepository>();
+            services.AddScoped<ITeachersRepository, TeachersRepository>();
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 

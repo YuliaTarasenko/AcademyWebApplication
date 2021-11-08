@@ -7,22 +7,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AcademyWebApplication.Data;
 using AcademyWebApplication.Models;
+using AcademyWebApplication.Data.Repositories;
 
 namespace AcademyWebApplication.Controllers
 {
     public class DepartmentsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IDepartmentsRepository _repo;
 
-        public DepartmentsController(ApplicationDbContext context)
+        public DepartmentsController(IDepartmentsRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
         // GET: Department
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Departments.ToListAsync());
+            return View(await _repo.GetMany().ToListAsync());
         }
 
         // GET: Department/Search
@@ -34,7 +35,7 @@ namespace AcademyWebApplication.Controllers
         // GET: Department/ShowSearchForm
         public async Task<IActionResult> ShowSearchForm(string Search)
         {
-            return View("Index", await _context.Departments.Where(d => d.Name.Contains(Search) || d.Financing == Convert.ToDecimal(Search) || d.Id.ToString() == Search).ToListAsync());
+            return View("Index", await _repo.GetMany().Where(d => d.Name.Contains(Search) || d.Financing == Convert.ToDecimal(Search) || d.Id.ToString() == Search).ToListAsync());
         }
 
         // GET: Department/Details/5
@@ -45,8 +46,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var department = await _repo.GetAsync(m => m.Id == id);
             if (department == null)
             {
                 return NotFound();
@@ -70,8 +70,7 @@ namespace AcademyWebApplication.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(department);
-                await _context.SaveChangesAsync();
+                await _repo.AddAsync(department);
                 return RedirectToAction(nameof(Index));
             }
             return View(department);
@@ -85,12 +84,13 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments.FindAsync(id);
-            if (department == null)
+            var entity = await _repo.GetAsync(d => d.Id == id);
+            await _repo.UpdateAsync(entity);
+            if (entity == null)
             {
                 return NotFound();
             }
-            return View(department);
+            return View(entity);
         }
 
         // POST: Department/Edit/5
@@ -98,23 +98,22 @@ namespace AcademyWebApplication.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Financing,Name")] Department department)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Financing,Name,FacultyId")] Department department)
         {
             if (id != department.Id)
             {
-                return NotFound();
+                return NotFound($"Id is not equal with {nameof(Department)}.Id");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(department);
-                    await _context.SaveChangesAsync();
+                    await _repo.UpdateAsync(department);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DepartmentExists(department.Id))
+                    if (!await DepartmentExistsAsync(department.Id))
                     {
                         return NotFound();
                     }
@@ -136,8 +135,7 @@ namespace AcademyWebApplication.Controllers
                 return NotFound();
             }
 
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var department = await _repo.GetAsync(d => d.Id == id);
             if (department == null)
             {
                 return NotFound();
@@ -151,15 +149,15 @@ namespace AcademyWebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var department = await _context.Departments.FindAsync(id);
-            _context.Departments.Remove(department);
-            await _context.SaveChangesAsync();
+            var department = await _repo.GetAsync(d=>d.Id == id);
+            if (department == null) return NotFound($"Record with id: {id} is not found");
+            await _repo.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool DepartmentExists(int id)
+        private Task<bool> DepartmentExistsAsync(int id)
         {
-            return _context.Departments.Any(e => e.Id == id);
+            return _repo.AnyAsync(e => e.Id == id);
         }
     }
 }
